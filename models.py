@@ -12,7 +12,7 @@ class SocialAccount(models.Model):
         return "%s %s" % (self.user, self.social)  
 
     class Meta:
-        verbose_name_plural = "Social Acccounts"
+        verbose_name_plural = "Social Accounts"
 
 class AppData(models.Model):
     nome = models.CharField(max_length=50)
