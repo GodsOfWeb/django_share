@@ -1,6 +1,9 @@
-from django.shortcuts import render_to_response
+from django.core.context_processors import csrf
 from django.http import HttpResponse, HttpResponseRedirect
+from django_share.models import AppData
 from rauth.service import OAuth2Service
+import os
+import binascii
 import requests
 import urllib
 import urllib2
@@ -8,14 +11,13 @@ import json
 import urlparse
 import tweepy
 
-APP_ID = "133716596826078"
-APP_SECRET = "05c001123d7c63235cd89ef3493a89ff"
-FB_REDIRECT_URI = "http://dev.artirion.com/fb_answer"
+APP_ID = ""
+APP_SECRET = ""
 
 def facebook_connect(request):
     args = {
         'client_id': APP_ID,
-        'redirect_uri': FB_REDIRECT_URI,
+        'redirect_uri': "dev.artirion.com/fb_answer",
         'scope':'publish_stream,manage_pages',
     }
     url = 'https://graph.facebook.com/oauth/authorize?%s' % urllib.urlencode(args)
@@ -46,19 +48,21 @@ def post_fb(request):
     response = urllib2.urlopen(response)
     return HttpResponse(response)
 
-LINKEDIN_APP_ID = '3q0yb279bufc'
-LINKEDIN_SECRET = 'pCoghlCNpuVRvR11'
-
-
-Objlinkedin = OAuth2Service(
-    client_id='3q0yb279bufc',
-    client_secret='pCoghlCNpuVRvR11',
-    name='linkedin',
-    authorize_url='https://www.linkedin.com/uas/oauth2/authorization',
-    access_token_url='https://www.linkedin.com/uas/oauth2/accessToken',
-    base_url='http://www.linkedin.com/v1/')
-
 def linkedin(request):
+    try:
+        app = AppData.objects.filter(nome="Linkedin")[0]
+    except:
+        return HttpResponse("Devi prima impostare i dettagli della tua Applicazione")
+
+    Objlinkedin = OAuth2Service(
+        client_id = app.app_id,
+        client_secret= app.app_secret,
+        name='linkedin',
+        authorize_url='https://www.linkedin.com/uas/oauth2/authorization',
+        access_token_url='https://www.linkedin.com/uas/oauth2/accessToken',
+        base_url='http://www.linkedin.com/v1/'
+    )
+
     try:
         data = {
             'code': request.GET["code"],
@@ -73,7 +77,7 @@ def linkedin(request):
     except:
         params = {
             'scope': 'r_network rw_nus',
-            'state': 'aidoshadoissadfksfa',
+            'state': binascii.b2a_hex(os.urandom(15)),
             'response_type': 'code',
             'redirect_uri': 'http://dev.artirion.com/linkedin',
         }
