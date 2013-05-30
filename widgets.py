@@ -12,6 +12,5 @@ class AccessTokenWidget(AdminTextInputWidget):
     def render(self, name, value, attrs=None):
         output = []
         output.append(super(AdminTextInputWidget, self).render(name, value, attrs))
-        if not value:
-            output.append('<button><a href="/linkedin" onclick="return showAddAnotherPopup(this);">Ottieni access_token Linkedin</a></button>')
+        output.append('<button><a href="/linkedin" onclick="return showAddAnotherPopup(this);">Ottieni access_token Linkedin</a></button>')
         return mark_safe(u''.join(output))
