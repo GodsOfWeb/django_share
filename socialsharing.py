@@ -7,7 +7,11 @@ import tweepy
 def twitter_post(message, link):
     if len(message) > 140:
         return "Il messaggio è troppo lungo"
-    app = AppData.objects.filter(nome="Twitter")[0] 
+    try:
+        app = AppData.objects.filter(nome="Twitter")[0] 
+    except:
+        return "Devi prima impostare i dettagli della tua applicazione"
+
     result = []
     for account in app.account.all():
         if account.social == "Twitter":
@@ -21,7 +25,11 @@ def twitter_post(message, link):
     return result
 
 def linkedin_post(message, link):
-    app = AppData.objects.filter(nome="Linkedin")[0]
+    try:
+        app = AppData.objects.filter(nome="Linkedin")[0]
+    except:
+        return "Devi prima impostare i dettagli della tua applicazione"
+ 
     data_json = {
         "comment": "Condividiamo!",
         "content": {
