@@ -72,7 +72,7 @@ def linkedin(request):
 
         session = Objlinkedin.get_raw_access_token(data=data)
         response = session.json()
-        return HttpResponse("Copia l'access token: <input value='%s'>" % response["access_token"])
+        return HttpResponse("Copia l'access token: <textarea style='width:400px; height:200px;' readonly='true'>%s</textarea>" % response["access_token"])
 
     except:
         params = {
